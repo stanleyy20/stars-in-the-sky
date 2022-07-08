@@ -10,6 +10,13 @@ class Sky {
         this.startX = 0;
         this.startY = 0;
         this.stars = [];
+        this.lastConstelation = 0;
+        this.nextConstelation = Math.random() * 3000 + 1000;
+        this.constellation = {
+            stars: [],
+            isClose: false,
+            width: null,
+        };
     }
 
     generateStars(count) {
@@ -48,6 +55,12 @@ class Sky {
         });
     }
 
+    updateConstellation() {
+        if (this.constellation.width > 0) {
+            this.constellation.width -= 0.04;
+        } else this.constellation.width = 0;
+    }
+
     generateRandomConstellation() {
         const x = this.width / 2 + (Math.random() * 500 - 250);
         const y = this.height / 2 + (Math.random() * 300 - 150);
@@ -66,11 +79,12 @@ class Sky {
                 })
                 .slice(0, Math.round(Math.random() * 7 + 3)),
             isClose: Math.random() > 0.5,
+            width: 4,
         };
     }
 
     drawConstellation() {
-        const { stars, isClose } = this.constellation;
+        const { stars, isClose, width } = this.constellation;
         const starsCount = stars.length;
 
         if (starsCount > 2) {
@@ -90,6 +104,7 @@ class Sky {
             }
 
             this.ctx.strokeStyle = '#f7eada';
+            this.ctx.lineWidth = width;
             this.ctx.stroke();
         }
     }
@@ -136,17 +151,23 @@ class Sky {
         this.ctx.restore();
     }
 
-    draw() {
+    draw(now) {
         this.clearCanvas();
 
         this.drowStars();
         this.updateStar();
 
         this.drawConstellation();
+        this.updateConstellation();
 
         this.drawOverlay();
 
-        window.requestAnimationFrame(() => this.draw());
+        if (now - this.lastConstelation > this.nextConstelation) {
+            this.lastConstelation = now;
+            this.nextConstelation = Math.random() * 600 + 3000;
+            this.generateRandomConstellation();
+        }
+        window.requestAnimationFrame((now) => this.draw(now));
     }
 
     initCanvas() {
@@ -159,7 +180,6 @@ class Sky {
     run() {
         this.initCanvas();
         this.generateStars(700);
-        this.generateRandomConstellation();
         this.draw();
     }
 }
