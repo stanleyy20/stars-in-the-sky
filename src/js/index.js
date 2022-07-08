@@ -24,7 +24,7 @@ class Sky {
                 radius: radius,
                 orginalRadius: radius,
                 color: 'rgba(255, 255, 255, 1)',
-                speed: Math.random() * 0.3,
+                speed: Math.random() * 0.6,
             });
         }
 
@@ -46,6 +46,52 @@ class Sky {
                 star.x = star.radius * -2;
             }
         });
+    }
+
+    generateRandomConstellation() {
+        const x = this.width / 2 + (Math.random() * 500 - 250);
+        const y = this.height / 2 + (Math.random() * 300 - 150);
+
+        const radius = (this.height / 2) * Math.random() * 0.5 + 0.5;
+
+        this.constellation = {
+            stars: this.stars
+                .filter((star) => {
+                    return (
+                        star.x > x - radius &&
+                        star.x < x + radius &&
+                        star.y > y - radius &&
+                        star.y < y + radius
+                    );
+                })
+                .slice(0, Math.round(Math.random() * 7 + 3)),
+            isClose: Math.random() > 0.5,
+        };
+    }
+
+    drawConstellation() {
+        const { stars, isClose } = this.constellation;
+        const starsCount = stars.length;
+
+        if (starsCount > 2) {
+            const firstStar = stars[0];
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(firstStar.x, firstStar.y);
+            this.ctx.lineTo(stars[1].x, stars[1].y);
+
+            for (let i = 1; i < starsCount - 1; i++) {
+                const nextStar = stars[i + 1];
+                this.ctx.lineTo(nextStar.x, nextStar.y);
+            }
+
+            if (isClose) {
+                this.ctx.lineTo(firstStar.x, firstStar.y);
+            }
+
+            this.ctx.strokeStyle = '#f7eada';
+            this.ctx.stroke();
+        }
     }
 
     drawOverlay() {
@@ -92,9 +138,14 @@ class Sky {
 
     draw() {
         this.clearCanvas();
-        this.updateStar();
+
         this.drowStars();
+        this.updateStar();
+
+        this.drawConstellation();
+
         this.drawOverlay();
+
         window.requestAnimationFrame(() => this.draw());
     }
 
@@ -108,6 +159,7 @@ class Sky {
     run() {
         this.initCanvas();
         this.generateStars(700);
+        this.generateRandomConstellation();
         this.draw();
     }
 }
