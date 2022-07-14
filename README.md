@@ -1,10 +1,6 @@
 
-<h1>Application for viewing photos of all breeds of dogs !!</h1>
-
-App using https://dog.ceo/ API and Minimalist Webpack Boilerplate
+<h1>stars in the sky !!</h1>
 
 
-
-
-![image](https://user-images.githubusercontent.com/98091205/176891995-0c31dd66-190a-4db7-b3c4-240e605cdfb5.png)
+![stars](https://user-images.githubusercontent.com/98091205/178929329-77ab5c5f-b874-4e23-baaa-20f65b90066d.jpg)
 
